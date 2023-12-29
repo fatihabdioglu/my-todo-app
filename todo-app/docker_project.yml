@@ -92,7 +92,7 @@
   vars:
     postgre_container: /home/ec2-user/postgresql
     container_name: fatih_postgre
-    image_name: 460569671082.dkr.ecr.us-east-1.amazonaws.com/fatih-repo/todo-app:postgr
+    image_name: 4460569671082.dkr.ecr.us-east-1.amazonaws.com/fatih-repo/todo-app:postgr
   tasks:
     - name: remove {{ container_name }} container and {{ image_name }} if exists
       shell: "docker ps -q --filter 'name={{ container_name }}' && docker stop {{ container_name }} && docker rm -fv {{ container_name }} && docker image rm -f {{ image_name }} || echo 'Not Found'"
