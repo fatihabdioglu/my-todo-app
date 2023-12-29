@@ -91,7 +91,7 @@
   become: true
   vars:
     postgre_container: /home/ec2-user/postgresql
-    container_name: tyler_postgre
+    container_name: fatih_postgre
     image_name: 460569671082.dkr.ecr.us-east-1.amazonaws.com/fatih-repo/todo-app:postgr
   tasks:
     - name: remove {{ container_name }} container and {{ image_name }} if exists
@@ -114,7 +114,7 @@
   become: true
   vars:
     container_path: /home/ec2-user/nodejs
-    container_name: tyler_nodejs
+    container_name: fatih_nodejs
     image_name: 460569671082.dkr.ecr.us-east-1.amazonaws.com/fatih-repo/todo-app:nodejs
   tasks:
     - name: remove {{ container_name }} container and {{ image_name }} if exists
@@ -133,7 +133,7 @@
   become: true
   vars:
     container_path: /home/ec2-user/react
-    container_name: tyler_react
+    container_name: fatih_react
     image_name: 460569671082.dkr.ecr.us-east-1.amazonaws.com/fatih-repo/todo-app:react
   tasks:
     - name: remove {{ container_name }} container and {{ image_name }} image if exists
