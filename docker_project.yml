@@ -1,31 +1,29 @@
 - name: install docker and config
-  hosts: _development_1
+  hosts: _development
   become: true
   vars:
     aws_region: us-east-1
-    ecr_registry: 460569671082.dkr.ecr.us-east-1.amazonaws.com
+    ecr_registry: 460569671082.dkr.ecr.us-east-1.amazonaws.com #change your ecr repo account adress
   tasks:
     - name: update all packages
-      yum:
+      ansible.builtin.yum:
         name: '*'
         state: latest
-
     - name: Remove docker if installed from CentOS repo
-      yum:
-        name: "{{ item }}"
+      ansible.builtin.yum:
+        name:
+          - docker
+          - docker-client
+          - docker-client-latest
+          - docker-common
+          - docker-latest
+          - docker-latest-logrotate
+          - docker-logrotate
+          - docker-engine
         state: removed
-      with_items:
-        - docker
-        - docker-client
-        - docker-client-latest
-        - docker-common
-        - docker-latest
-        - docker-latest-logrotate
-        - docker-logrotate
-        - docker-engine
 
     - name: Install yum utils
-      yum:
+      ansible.builtin.yum:
         name: "{{ item }}"
         state: latest
       with_items:
@@ -35,53 +33,46 @@
         - unzip
 
     - name: Add Docker repo
-      get_url:
+      ansible.builtin.get_url:
         url: https://download.docker.com/linux/centos/docker-ce.repo
-        dest: /etc/yum.repos.d/docer-ce.repo
+        dest: /etc/yum.repos.d/docker-ce.repo
 
     - name: Install Docker
-      package:
+      ansible.builtin.package:
         name: docker-ce
         state: latest
 
-    - name: Install pip
-      package:
-        name: python3-pip
-        state: present
-        update_cache: true
-
-    - name: Install docker sdk
-      pip:
-        name: docker
-
     - name: Add user ec2-user to docker group
-      user:
+      ansible.builtin.user:
         name: ec2-user
         groups: docker
         append: yes
 
     - name: Start Docker service
-      service:
+      ansible.builtin.service:
         name: docker
         state: started
         enabled: yes
 
     - name: install aws cli
-      get_url:
+      ansible.builtin.get_url:
         url: https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip
         dest: /home/ec2-user/awscliv2.zip
 
     - name: unzip zip file
-      unarchive:
+      ansible.builtin.unarchive:
         src: /home/ec2-user/awscliv2.zip
         dest: /home/ec2-user
         remote_src: True
 
-    - name: run the awscli
-      shell: ./aws/install
+    - name: run the installer
+      ansible.builtin.command:
+      args:
+        cmd: "./aws/install"
+        creates: /usr/local/bin/aws
 
     - name: log in to AWS ec2-user
-      shell: |
+      ansible.builtin.shell: |
         export PATH=/usr/local/bin:$PATH
         source ~/.bash_profile
         aws ecr get-login-password --region {{ aws_region }} | docker login --username AWS --password-stdin {{ ecr_registry }}
@@ -90,15 +81,22 @@
   hosts: _ansible_postgresql
   become: true
   vars:
-    postgre_container: /home/ec2-user/postgresql
     container_name: fatih_postgre
-    image_name: 4460569671082.dkr.ecr.us-east-1.amazonaws.com/fatih-repo/todo-app:postgr
+    image_name: 460569671082.dkr.ecr.us-east-1.amazonaws.com/fatih-repo/todo-app:postgre   #change your ecr repo account adress
   tasks:
-    - name: remove {{ container_name }} container and {{ image_name }} if exists
-      shell: "docker ps -q --filter 'name={{ container_name }}' && docker stop {{ container_name }} && docker rm -fv {{ container_name }} && docker image rm -f {{ image_name }} || echo 'Not Found'"
+    - name: remove postgre container
+      community.docker.docker_container:
+        name: "{{ container_name }}"
+        state: absent
+        force_kill: true
+
+    - name: remove postgre image
+      community.docker.docker_image:
+        name: "{{ image_name }}"
+        state: absent
 
     - name: Launch postgresql docker container
-      docker_container:
+      community.docker.docker_container:
         name: "{{ container_name }}"
         image: "{{ image_name }}"
         state: started
@@ -113,15 +111,22 @@
   hosts: _ansible_nodejs
   become: true
   vars:
-    container_path: /home/ec2-user/nodejs
     container_name: fatih_nodejs
-    image_name: 460569671082.dkr.ecr.us-east-1.amazonaws.com/fatih-repo/todo-app:nodejs
+    image_name: 460569671082.dkr.ecr.us-east-1.amazonaws.com/fatih-repo/todo-app:nodejs   #change your ecr repo account adress
   tasks:
-    - name: remove {{ container_name }} container and {{ image_name }} if exists
-      shell: "docker ps -q --filter 'name={{ container_name }}' && docker stop {{ container_name }} && docker rm -fv {{ container_name }} && docker image rm -f {{ image_name }} || echo 'Not Found'"
+    - name: remove postgre container
+      community.docker.docker_container:
+        name: "{{ container_name }}"
+        state: absent
+        force_kill: true
+
+    - name: remove postgre image
+      community.docker.docker_image:
+        name: "{{ image_name }}"
+        state: absent
 
     - name: Launch postgresql docker container
-      docker_container:
+      community.docker.docker_container:
         name: "{{ container_name }}"
         image: "{{ image_name }}"
         state: started
@@ -132,15 +137,22 @@
   hosts: _ansible_react
   become: true
   vars:
-    container_path: /home/ec2-user/react
     container_name: fatih_react
-    image_name: 460569671082.dkr.ecr.us-east-1.amazonaws.com/fatih-repo/todo-app:react
+    image_name: 460569671082.dkr.ecr.us-east-1.amazonaws.com/fatih-repo/todo-app:react #change your ecr repo account adress
   tasks:
-    - name: remove {{ container_name }} container and {{ image_name }} image if exists
-      shell: "docker ps -q --filter 'name={{ container_name }}' && docker stop {{ container_name }} && docker rm -fv {{ container_name }} && docker image rm -f {{ image_name }} || echo 'Not Found'"
+    - name: remove postgre container
+      community.docker.docker_container:
+        name: "{{ container_name }}"
+        state: absent
+        force_kill: true
+
+    - name: remove postgre image
+      community.docker.docker_image:
+        name: "{{ image_name }}"
+        state: absent
 
     - name: Launch react docker container
-      docker_container:
+      community.docker.docker_container:
         name: "{{ container_name }}"
         image: "{{ image_name }}"
         state: started

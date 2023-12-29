@@ -2,8 +2,14 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.0"
+      version = "~> 5.0"
     }
+  }
+  backend "s3" {
+    bucket = "jenkins-project-backend-fatih"
+    key = "backend/tf-backend-jenkins.tfstate"
+    region = "us-east-1"
+  }
 }
 
 provider "aws" {
@@ -14,28 +20,30 @@ variable "tags" {
   default = ["postgresql", "nodejs", "react"]
 }
 
-
 variable "user" {
   default = "fatih"
-  
 }
 
 resource "aws_instance" "managed_nodes" {
-  ami = "ami-023c11a32b0207432"
+  ami = "ami-05a5f6298acdb05b6"
   count = 3
   instance_type = "t2.micro"
-  key_name = "firstkey"
+  key_name = "mackeypair"  # change with your pem file
   vpc_security_group_ids = [aws_security_group.tf-sec-gr.id]
-  iam_instance_profile = "jenkins-project-profile-${var.user}"
+  iam_instance_profile = "jenkins-project-profile-${var.user}" # we created this with jenkins server
   tags = {
     Name = "ansible_${element(var.tags, count.index )}"
-    stack = "ansible_project-1"
-    environment = "development_1"
+    stack = "ansible_project"
+    environment = "development"
   }
+  user_data = <<-EOF
+            #! /bin/bash
+            dnf update -y
+            EOF
 }
 
 resource "aws_security_group" "tf-sec-gr" {
-  name = "project208-sec-gr"
+  name = "project208-sec-gr-${var.user}"
   tags = {
     Name = "project208-sec-gr"
   }
@@ -79,10 +87,8 @@ output "react_ip" {
 
 output "node_public_ip" {
   value = aws_instance.managed_nodes[1].public_ip
-
 }
 
 output "postgre_private_ip" {
   value = aws_instance.managed_nodes[0].private_ip
-
 }
