@@ -41,18 +41,14 @@ pipeline{
                 script {
                     env.NODE_IP = sh(script: 'terraform output -raw node_public_ip', returnStdout:true).trim()
                     env.DB_HOST = sh(script: 'terraform output -raw postgre_private_ip', returnStdout:true).trim()
-                    env.DB_NAME = sh(script: 'aws --region=us-east-1 ssm get-parameters --names "db_name" --query "Parameters[*].{Value:Value}" --output text', returnStdout:true).trim()
-                    env.DB_PASSWORD = sh(script: 'aws --region=us-east-1 ssm get-parameters --names "db_password" --query "Parameters[*].{Value:Value}" --output text', returnStdout:true).trim()
                 }
                 sh 'echo ${DB_HOST}'
                 sh 'echo ${NODE_IP}'
-                sh 'echo ${DB_NAME}'
-                sh 'echo ${DB_PASSWORD}'
                 sh 'envsubst < node-env-template > ./nodejs/server/.env'
                 sh 'cat ./nodejs/server/.env'
                 sh 'envsubst < react-env-template > ./react/client/.env'
                 sh 'cat ./react/client/.env'
-                sh 'docker build --force-rm -t "$ECR_REGISTRY/$APP_REPO_NAME:postgre" -f ./postgresql/dockerfile-postgresql .'
+                sh 'docker build --force-rm -t "$ECR_REGISTRY/$APP_REPO_NAME:postgr" -f ./postgresql/dockerfile-postgresql .'
                 sh 'docker build --force-rm -t "$ECR_REGISTRY/$APP_REPO_NAME:nodejs" -f ./nodejs/dockerfile-nodejs .'
                 sh 'docker build --force-rm -t "$ECR_REGISTRY/$APP_REPO_NAME:react" -f ./react/dockerfile-react .'
                 sh 'docker image ls'
