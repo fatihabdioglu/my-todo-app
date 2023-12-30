@@ -84,7 +84,7 @@ pipeline{
                 sh 'ls -l'
                 sh 'ansible --version'
                 sh 'ansible-inventory --graph'
-                sh "ansible-playbook -i inventory_aws_ec2.yml
+                sh 'ansible-playbook -i inventory_aws_ec2.yml'
             }
         }
 
