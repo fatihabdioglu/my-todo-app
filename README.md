@@ -413,7 +413,7 @@ Private Key: Content of your .pem extension key file
 ```
 ### Step-11: Create Jenkinsfile
 Let's create a ```Jenkinsfile``` under our ```todo-app``` folder. File content available in my repo.
-### Stem-12: Create Pipeline
+### Step-12: Create Pipeline
 Let's go to the Jenkins Dashboard, click New Item and create a pipeline as follows
 ```
 Name: todo-app
@@ -422,3 +422,20 @@ GitHub project: <Enter-Project-Url>
 Pipeline:Pipeline script from > SCM:Git > Repo URL: <repo-url> > Credentials: github-token
 Branch: */main
 Path: Jenkinsfile
+```
+### Step-13: Application Testing
+Let's check in Aws that instances for React, Nodejs and Posgresql are created.
+
+![Aws](./media/aws.png)
+
+Let's see that Ecr Repo is created and Images are pushed to Ecr Repo
+
+![Ecr](./media/ecr.png)
+
+Now let's take the public ip of React Server and check its status on port 3000.
+
+![React](./media/todo.png)
+
+Finally, let's see that our Jenkins pipeline has completed successfully.
+
+![Jenkins](./media/pipeline.png)
