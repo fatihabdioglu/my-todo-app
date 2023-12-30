@@ -14,7 +14,6 @@ pipeline{
         APP_NAME = "todo"
         HOME_FOLDER = "/home/ec2-user"
         GIT_FOLDER = sh(script:'echo ${GIT_URL} | sed "s/.*\\///;s/.git$//"', returnStdout:true).trim()
-        PRIVATE_KEY_FILE = "credentials('ansible-key').file"
     }
     stages {
         stage('Create Infrastructure for the App') {
@@ -85,8 +84,7 @@ pipeline{
                 sh 'ls -l'
                 sh 'ansible --version'
                 sh 'ansible-inventory --graph'
-                sh 'chmod 0600 ${PRIVATE_KEY_FILE}'
-                ansiblePlaybook credentialsId: 'ansible-key', disableHostKeyChecking: true, installation: 'ansible', inventory: 'inventory_aws_ec2.yml', playbook: 'docker_project.yml', vaultTmpPath: ''
+                sh "ansible-playbook -i inventory_aws_ec2.yml
             }
         }
 
