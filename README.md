@@ -225,7 +225,7 @@ Create a file named ```docker_project.yml``` under the todo-app folder.
   become: true
   vars:
     aws_region: us-east-1
-    ecr_registry: 460569671082.dkr.ecr.us-east-1.amazonaws.com # change aws account id
+    ecr_registry: 46056967****.dkr.ecr.us-east-1.amazonaws.com # change aws account id
   tasks:
     - name: update all packages
       yum:
@@ -314,7 +314,7 @@ Create a file named ```docker_project.yml``` under the todo-app folder.
   vars:
     postgre_container: /home/ec2-user/postgresql
     container_name: tyler_postgre
-    image_name: 046402772087.dkr.ecr.us-east-1.amazonaws.com/fatih-repo/cw-todo-app:postgr
+    image_name: 04640277****.dkr.ecr.us-east-1.amazonaws.com/fatih-repo/cw-todo-app:postgr
   tasks:
     - name: remove {{ container_name }} container and {{ image_name }} if exists
       shell: "docker ps -q --filter 'name={{ container_name }}' && docker stop {{ container_name }} && docker rm -fv {{ container_name }} && docker image rm -f {{ image_name }} || echo 'Not Found'"
@@ -337,7 +337,7 @@ Create a file named ```docker_project.yml``` under the todo-app folder.
   vars:
     container_path: /home/ec2-user/nodejs
     container_name: tyler_nodejs
-    image_name: 460569671082.dkr.ecr.us-east-1.amazonaws.com/fatih-repo/cw-todo-app:nodejs
+    image_name: 46056967****.dkr.ecr.us-east-1.amazonaws.com/fatih-repo/cw-todo-app:nodejs
   tasks:
     - name: remove {{ container_name }} container and {{ image_name }} if exists
       shell: "docker ps -q --filter 'name={{ container_name }}' && docker stop {{ container_name }} && docker rm -fv {{ container_name }} && docker image rm -f {{ image_name }} || echo 'Not Found'"
@@ -356,7 +356,7 @@ Create a file named ```docker_project.yml``` under the todo-app folder.
   vars:
     container_path: /home/ec2-user/react
     container_name: tyler_react
-    image_name: 046402772087.dkr.ecr.us-east-1.amazonaws.com/fatih-repo/cw-todo-app:react
+    image_name: 04640277****.dkr.ecr.us-east-1.amazonaws.com/fatih-repo/cw-todo-app:react
   tasks:
     - name: remove {{ container_name }} container and {{ image_name }} image if exists
       shell: "docker ps -q --filter 'name={{ container_name }}' && docker stop {{ container_name }} && docker rm -fv {{ container_name }} && docker image rm -f {{ image_name }} || echo 'Not Found'"
